@@ -48,6 +48,12 @@ function App() {
       return;
     }
 
+    const bal = await signer.getBalance();
+    if (bal.lt(maticToPay)) {
+      enqueueSnackbar("Not enough funds...", { variant: "warning" });
+      return;
+    }
+
     setIsBuying(true);
     enqueueSnackbar("Buying a BEPSI...", { variant: "info" });
     try {
@@ -74,6 +80,12 @@ function App() {
       const amount = ethers.utils
         .parseUnits("1", stablecoinDecimals)
         .add(selectedBepsi);
+
+      const bal = await stablecoin.balanceOf(await signer.getAddress());
+      if (bal.lt(amount)) {
+        enqueueSnackbar("Not enough funds...", { variant: "warning" });
+        return;
+      }
 
       setIsBuying(true);
       enqueueSnackbar("Buying a BEPSI...", { variant: "info" });
