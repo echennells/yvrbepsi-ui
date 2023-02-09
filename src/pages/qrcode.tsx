@@ -1,5 +1,4 @@
 import { Grid, Typography, CircularProgress, Alert } from "@mui/material";
-import { BigNumber } from "ethers";
 import { useEffect, useState } from "react";
 import QRCode from "react-qr-code";
 import ResponsiveAppBar from "../components/ResponsiveAppBar";
