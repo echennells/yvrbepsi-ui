@@ -17,12 +17,12 @@ import {
 import { BigNumber, ethers } from "ethers";
 
 import ERC20Abi from "./abi/erc20.json";
-
-// Matic network, payment address accepts straight up matic
-const PAYMENT_ADDRESS = "0xD5184c0d23f7551DB7c8c4a3a3c5F1685059A09c";
-const USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
-const USDC_ADDRESS = "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174";
-const DAI_ADDRESS = "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063";
+import {
+  PAYMENT_ADDRESS,
+  USDC_ADDRESS,
+  USDT_ADDRESS,
+  DAI_ADDRESS,
+} from "./common/constants";
 
 const BEPSI_ICONS = ["🟢", "🔴", "🌸", "🍒", "🟣", "🟠"];
 
@@ -106,8 +106,11 @@ function App() {
       getUsdPerMatic().then((x) => setUsdPerMatic(x));
     }
 
+    // 5% just so its >$1
     if (usdPerMatic != null) {
-      setMaticToPay(ethers.utils.parseUnits((1.0 / usdPerMatic).toString()));
+      setMaticToPay(
+        ethers.utils.parseUnits(((1.0 / usdPerMatic) * 1.05).toString())
+      );
     }
   }, [usdPerMatic]);
 

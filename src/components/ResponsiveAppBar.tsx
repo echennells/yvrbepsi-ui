@@ -15,7 +15,7 @@ import MainIcon from "@mui/icons-material/LocalCafe";
 import { ConnectKitButton } from "connectkit";
 import { Link } from "react-router-dom";
 
-const pages: string[] = []; //"About"];
+const pages: string[] = ["QR Codes"];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -82,7 +82,7 @@ function ResponsiveAppBar() {
             >
               {pages.map((page) => (
                 <Link
-                  to={`/${page.toLowerCase()}`}
+                  to={`/${page.replace(" ", "").toLowerCase()}`}
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
                   <MenuItem key={page} onClick={handleCloseNavMenu}>
@@ -116,7 +116,7 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Link
-                to={`/${page.toLowerCase()}`}
+                to={`/${page.replace(" ", "").toLowerCase()}`}
                 style={{ textDecoration: "none", color: "inherit" }}
               >
                 <Button

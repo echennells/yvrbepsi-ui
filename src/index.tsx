@@ -12,6 +12,8 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { blue } from "@mui/material/colors";
 
+import QRCodepage from "./pages/qrcode";
+
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
@@ -49,6 +51,7 @@ root.render(
               <CssBaseline />
               <Routes>
                 <Route path="/" element={<App />} />
+                <Route path="/qrcodes" element={<QRCodepage />} />
               </Routes>
             </ConnectKitProvider>
           </WagmiConfig>
