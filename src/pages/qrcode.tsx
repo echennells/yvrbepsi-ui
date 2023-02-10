@@ -10,11 +10,15 @@ import {
   DAI_ADDRESS,
 } from "../common/constants";
 
-// 1 to 6
-const randomCan = () => Math.floor(Math.random() * 6) + 1;
-
 function QRCodePage() {
   const [usdPerMatic, setUsdPerMatic] = useState<null | number>(null);
+
+  // 1 to 6
+  const randomCan = () => Math.floor(Math.random() * 6) + 1;
+
+  const randDai = randomCan();
+  const randUsdc = randomCan();
+  const randUsdt = randomCan();
 
   useEffect(() => {
     if (usdPerMatic === null) {
@@ -41,17 +45,23 @@ function QRCodePage() {
               ).toString()}e18`}
             />
           )}
-          <Typography variant="h5">DAI</Typography>
+          <Typography marginTop={5} variant="h5">
+            DAI
+          </Typography>
           <QRCode
-            value={`ethereum:${DAI_ADDRESS}/transfer?address=${PAYMENT_ADDRESS}&uint256=100000000000000000${randomCan().toString()}`}
+            value={`ethereum:${DAI_ADDRESS}/transfer?address=${PAYMENT_ADDRESS}&uint256=100000000000000000${randDai}`}
           />
-          <Typography variant="h5">USDC</Typography>
+          <Typography marginTop={5} variant="h5">
+            USDC
+          </Typography>
           <QRCode
-            value={`ethereum:${USDC_ADDRESS}/transfer?address=${PAYMENT_ADDRESS}&uint256=100000${randomCan().toString()}`}
+            value={`ethereum:${USDC_ADDRESS}/transfer?address=${PAYMENT_ADDRESS}&uint256=100000${randUsdc}`}
           />
-          <Typography variant="h5">USDT</Typography>
+          <Typography marginTop={5} variant="h5">
+            USDT
+          </Typography>
           <QRCode
-            value={`ethereum:${USDT_ADDRESS}/transfer?address=${PAYMENT_ADDRESS}&uint256=100000${randomCan().toString()}`}
+            value={`ethereum:${USDT_ADDRESS}/transfer?address=${PAYMENT_ADDRESS}&uint256=100000${randUsdt}`}
           />
         </Grid>
         <Grid item xs={1} md={3} />
