@@ -10,6 +10,9 @@ import {
   DAI_ADDRESS,
 } from "../common/constants";
 
+// 1 to 6
+const randomCan = () => Math.floor(Math.random() * 6) + 1;
+
 function QRCodePage() {
   const [usdPerMatic, setUsdPerMatic] = useState<null | number>(null);
 
@@ -40,15 +43,15 @@ function QRCodePage() {
           )}
           <Typography variant="h5">DAI</Typography>
           <QRCode
-            value={`ethereum:${DAI_ADDRESS}/transfer?address=${PAYMENT_ADDRESS}&uint256=1000000000000000010`}
+            value={`ethereum:${DAI_ADDRESS}/transfer?address=${PAYMENT_ADDRESS}&uint256=100000000000000000${randomCan().toString()}`}
           />
           <Typography variant="h5">USDC</Typography>
           <QRCode
-            value={`ethereum:${USDC_ADDRESS}/transfer?address=${PAYMENT_ADDRESS}&uint256=1000010`}
+            value={`ethereum:${USDC_ADDRESS}/transfer?address=${PAYMENT_ADDRESS}&uint256=100000${randomCan().toString()}`}
           />
           <Typography variant="h5">USDT</Typography>
           <QRCode
-            value={`ethereum:${USDT_ADDRESS}/transfer?address=${PAYMENT_ADDRESS}&uint256=1000010`}
+            value={`ethereum:${USDT_ADDRESS}/transfer?address=${PAYMENT_ADDRESS}&uint256=100000${randomCan().toString()}`}
           />
         </Grid>
         <Grid item xs={1} md={3} />
