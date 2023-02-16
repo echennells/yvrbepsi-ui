@@ -156,7 +156,7 @@ function App() {
             style={{ backgroundColor: "purple" }}
             fullWidth
           >
-            Pay with Matic (~
+            Donate with Matic (~
             {maticToPay === null
               ? "..."
               : ethers.utils.formatUnits(maticToPay).slice(0, 6)}{" "}
@@ -169,7 +169,7 @@ function App() {
             variant="contained"
             fullWidth
           >
-            Pay with DAI (~1 DAI)
+            Donate with DAI (~1 DAI)
           </Button>
           <Button
             disabled={isBuying}
@@ -178,7 +178,7 @@ function App() {
             variant="contained"
             fullWidth
           >
-            Pay with USDC (~1 USDC)
+            Donate with USDC (~1 USDC)
           </Button>
           <Button
             disabled={isBuying}
@@ -187,7 +187,7 @@ function App() {
             variant="contained"
             fullWidth
           >
-            Pay with USDT (~1 USDT)
+            Donate with USDT (~1 USDT)
           </Button>
         </Grid>
         <Grid item xs={1} md={3} />
