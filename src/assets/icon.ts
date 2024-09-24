@@ -1,4 +1,4 @@
-export default `<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+const icon = `<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_640_294)">
 <rect width="256" height="256" fill="white"/>
 <rect width="457" height="256" transform="translate(-101)" fill="white"/>
@@ -106,4 +106,5 @@ export default `<svg width="256" height="256" viewBox="0 0 256 256" fill="none" 
 </clipPath>
 </defs>
 </svg>
-`;
+`
+export default icon;

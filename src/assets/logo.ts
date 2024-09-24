@@ -1,4 +1,4 @@
-export default `<svg width="1024" height="574" viewBox="0 0 1024 574" fill="none" xmlns="http://www.w3.org/2000/svg">
+const logo = `<svg width="1024" height="574" viewBox="0 0 1024 574" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect width="1024" height="574" fill="white"/>
 <rect x="645.12" y="20.5" width="266.24" height="10.25" fill="#17A2D9"/>
 <rect x="645.12" y="20.5" width="266.24" height="10.25" fill="#17A2D9"/>
@@ -262,4 +262,5 @@ export default `<svg width="1024" height="574" viewBox="0 0 1024 574" fill="none
 <rect x="296.96" y="287" width="20.48" height="10.25" fill="#EC2816"/>
 <rect x="296.96" y="266.5" width="20.48" height="10.25" fill="#F4311D"/>
 </svg>
-`;
+`
+export default logo;
