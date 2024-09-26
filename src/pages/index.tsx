@@ -96,7 +96,7 @@ export default function Home() {
 
         <div className="bg-grey flex flex-col w-full py-2">
           <p className="text-xl">Choose a drink:</p>
-          <div className="grid grid-cols-4 grid-flow-row gap-2 pr-16 y-2">
+          <div className="grid grid-cols-4 grid-flow-row gap-2 pr-12 y-2">
             {drinks.map(({ id, name, color }, index) => (
               <button
                 key={id}
