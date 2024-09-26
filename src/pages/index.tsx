@@ -2,7 +2,7 @@ import { VT323 } from "next/font/google";
 import Image from "next/image";
 import { useCallback, useState, useEffect, useMemo } from "react";
 import { providers, utils, Contract, BigNumber } from "ethers";
-import { useSetChain } from "@web3-onboard/react"
+import { useSetChain } from "@web3-onboard/react";
 
 import banner from "@/assets/bepsi-banner.png";
 import Dropdown from "@/components/dropdown";
@@ -17,75 +17,94 @@ export default function Home() {
   const [selected, setSelected] = useState(0);
   const [address, setAddress] = useState<string>();
   const [decimals, setDecimals] = useState<number>();
-  const [tokenChainId, setTokenChainId] = useState<string>()
-  const [tokenBalance, setTokenBalance] = useState<BigNumber>()
-  const [pending, setPending] = useState(false)
+  const [tokenChainId, setTokenChainId] = useState<string>();
+  const [tokenBalance, setTokenBalance] = useState<BigNumber>();
+  const [pending, setPending] = useState(false);
+  const [basePrice, setBasePrice] = useState(1);
+  const [donation, setDonation] = useState(0);
 
   const [{ wallet }, connect] = useConnectWallet();
-  const [{connectedChain}, setChain] = useSetChain()
+  const [{ connectedChain }, setChain] = useSetChain();
 
-  const insufficientBalance = useMemo(() => tokenBalance && decimals && utils.parseUnits("1", decimals).add(selected).gt(tokenBalance), [tokenBalance, selected, decimals])
+  const insufficientBalance = useMemo(
+    () =>
+      tokenBalance &&
+      decimals &&
+      utils.parseUnits((basePrice + donation).toString(), decimals).add(selected).gt(tokenBalance),
+    [tokenBalance, selected, decimals, basePrice, donation],
+  );
 
   const buy = useCallback(async () => {
     if (
       wallet?.provider !== undefined &&
       address !== undefined &&
-      decimals !== undefined && 
+      decimals !== undefined &&
       connectedChain !== undefined &&
       connectedChain !== null &&
       tokenChainId !== undefined &&
       setChain !== undefined
     ) {
-      setPending(true)
+      setPending(true);
       if (connectedChain.id !== tokenChainId) {
-        await setChain({chainId: tokenChainId})
+        await setChain({ chainId: tokenChainId });
       }
       const signer = new providers.Web3Provider(
         wallet.provider,
-        "any"
+        "any",
       ).getSigner();
       const token = new Contract(address, ERC20, signer);
       token
         .transfer(
           config.RECEIVER_ADDRESS,
-          +utils.parseUnits("1", decimals) + selected
-        ).then(async (tx: any) => {
-          await tx.wait()
+          +utils.parseUnits((basePrice + donation).toString(), decimals) +
+            selected,
+        )
+        .then(async (tx: any) => {
+          await tx.wait();
         })
-        .catch(console.error).finally(() => {
-          setPending(false)
-        })
+        .catch(console.error)
+        .finally(() => {
+          setPending(false);
+        });
     }
-  }, [selected, wallet, address, decimals, tokenChainId, connectedChain, setChain]);
+  }, [
+    selected,
+    wallet,
+    address,
+    decimals,
+    tokenChainId,
+    connectedChain,
+    setChain,
+    donation,
+    basePrice,
+  ]);
 
   useEffect(() => {
-      let subscribed = true
+    let subscribed = true;
     if (
       wallet?.provider !== undefined &&
       wallet?.accounts !== undefined &&
       wallet.accounts.length > 0 &&
       address !== undefined &&
-      decimals !== undefined && 
+      decimals !== undefined &&
       connectedChain !== undefined &&
-      setChain !== undefined && 
+      setChain !== undefined &&
       tokenChainId !== undefined
     ) {
-        setChain({chainId: tokenChainId}).then(() => {
-          const provider = new providers.Web3Provider(
-                wallet.provider,
-                "any"
-          )
-          const token = new Contract(address, ERC20, provider);
-          token.balanceOf(wallet.accounts[0].address).then((res: any) => {
+      setChain({ chainId: tokenChainId }).then(() => {
+        const provider = new providers.Web3Provider(wallet.provider, "any");
+        const token = new Contract(address, ERC20, provider);
+        token.balanceOf(wallet.accounts[0].address).then((res: any) => {
           if (subscribed) {
-            setTokenBalance(res)
+            setTokenBalance(res);
           }
-          })
-        }
-        )
+        });
+      });
     }
-      return () => {subscribed = false}
-  }, [tokenChainId, connectedChain, setChain, address, decimals, wallet])
+    return () => {
+      subscribed = false;
+    };
+  }, [tokenChainId, connectedChain, setChain, address, decimals, wallet]);
 
   return (
     <main
@@ -97,16 +116,38 @@ export default function Home() {
         <div className="bg-grey flex flex-col w-full py-2">
           <p className="text-xl">Choose a drink:</p>
           <div className="grid grid-cols-4 grid-flow-row gap-2 pr-12 y-2">
-            {drinks.map(({ id, name, color }, index) => (
+            {drinks.map(({ id, name, color, price }, index) => (
               <button
                 key={id}
                 style={{ backgroundColor: color }}
-                onClick={() => setSelected(index)}
+                onClick={() => {
+                  setSelected(index);
+                  setBasePrice(price);
+                }}
                 className={`h-8 text-md text-white ${
                   selected === index ? "border-background-alt border-4" : ""
                 }`}
               >
                 {name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-grey flex flex-col w-full py-2">
+          <p className="text-xl">Donation:</p>
+          <div className="grid grid-cols-4 grid-flow-row gap-2 pr-12 y-2">
+            {[0, 2, 4].map((val) => (
+              <button
+                key={val}
+                onClick={() => setDonation(val)}
+                className={`h-8 text-md text-black ${
+                  donation === val
+                    ? "border-background-alt border-4"
+                    : "border-gray-400 border-4"
+                }`}
+              >
+                {basePrice + val}
               </button>
             ))}
           </div>
@@ -119,16 +160,15 @@ export default function Home() {
             setToken={(address, decimals, chainId) => {
               setAddress(address);
               setDecimals(decimals);
-              setTokenChainId(chainId)
+              setTokenChainId(chainId);
             }}
           />
-          {
-            tokenBalance && 
-              <div className="w-full flex justify-between my-1">
-                <p>Balance:</p>
-                <p>{utils.formatUnits(tokenBalance, decimals)}</p>
-              </div>
-          }
+          {tokenBalance && (
+            <div className="w-full flex justify-between my-1">
+              <p>Balance:</p>
+              <p>{utils.formatUnits(tokenBalance, decimals)}</p>
+            </div>
+          )}
         </div>
 
         <div className="w-96 max-w-full mt-auto">
@@ -143,7 +183,13 @@ export default function Home() {
               }
             }}
           >
-            {!wallet ? "CONNECT" : insufficientBalance ? "Insufficient Balance" : pending ? "SENDING..." : "BUY"}
+            {!wallet
+              ? "CONNECT"
+              : insufficientBalance
+                ? "Insufficient Balance"
+                : pending
+                  ? "SENDING..."
+                  : "BUY"}
           </button>
         </div>
       </div>

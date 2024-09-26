@@ -106,5 +106,5 @@ const icon = `<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xm
 </clipPath>
 </defs>
 </svg>
-`
+`;
 export default icon;

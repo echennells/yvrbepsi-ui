@@ -262,5 +262,5 @@ const logo = `<svg width="1024" height="574" viewBox="0 0 1024 574" fill="none" 
 <rect x="296.96" y="287" width="20.48" height="10.25" fill="#EC2816"/>
 <rect x="296.96" y="266.5" width="20.48" height="10.25" fill="#F4311D"/>
 </svg>
-`
+`;
 export default logo;

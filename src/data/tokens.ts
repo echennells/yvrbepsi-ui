@@ -10,16 +10,16 @@ export type Token = {
 
 const tokens: { [key: string]: Token[] } = {
   "0x2105": [
-      {
-        address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-        chainId: "0x2105",
-        symbol: "USDC",
-        decimals: 6,
-        name: "USD Coin",
-        logoURI:
-          "https://static.debank.com/image/coin/logo_url/usdc/e87790bfe0b3f2ea855dc29069b38818.png",
-        coinKey: "USDC",
-      },
+    {
+      address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      chainId: "0x2105",
+      symbol: "USDC",
+      decimals: 6,
+      name: "USD Coin",
+      logoURI:
+        "https://static.debank.com/image/coin/logo_url/usdc/e87790bfe0b3f2ea855dc29069b38818.png",
+      coinKey: "USDC",
+    },
   ],
   "0x89": [
     {
@@ -76,7 +76,7 @@ const tokens: { [key: string]: Token[] } = {
         "https://static.debank.com/image/coin/logo_url/usdc/e87790bfe0b3f2ea855dc29069b38818.png",
       coinKey: "USDC",
     },
-  ]
+  ],
 };
 
 export default tokens;
