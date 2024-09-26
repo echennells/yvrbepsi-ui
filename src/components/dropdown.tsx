@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { useSetChain } from "@web3-onboard/react"
+import { useSetChain } from "@web3-onboard/react";
 
 import dropdown from "@/assets/dropdown.svg";
 import { useWallets } from "@web3-onboard/react";
@@ -43,7 +43,7 @@ function NativeOption({ symbol, logoURI, chain }: TokenWithChain) {
 export default function Dropdown({ options, setToken }: Props) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<TokenWithChain>();
-  const [{connectedChain}, setChain] = useSetChain()
+  const [{ connectedChain }, setChain] = useSetChain();
 
   const toggle = () => {
     setOpen((last) => !last);
@@ -54,7 +54,7 @@ export default function Dropdown({ options, setToken }: Props) {
       setToken(selected.address, selected.decimals, selected.chain.id);
     }
     if (selected && connectedChain && connectedChain.id !== selected.chain.id) {
-      setChain({chainId: selected.chain.id.toString()})
+      setChain({ chainId: selected.chain.id.toString() });
     }
   }, [selected, setToken, connectedChain, setChain]);
 
@@ -83,8 +83,8 @@ export default function Dropdown({ options, setToken }: Props) {
         } overflow-hidden absolute top-12 -ml-1 -mr-1 left-0 right-0 bg-grey w-[calc(100% + 2px)] border-background`}
       >
         {Object.values(chains)
-          .map((chain) => 
-             tokens[chain.id.toString()]?.map((option) => (
+          .map((chain) =>
+            tokens[chain.id.toString()]?.map((option) => (
               <div
                 key={`${option.coinKey}-${option.chainId}`}
                 onClick={() => {
@@ -93,7 +93,7 @@ export default function Dropdown({ options, setToken }: Props) {
               >
                 <NativeOption {...option} chain={chain} />
               </div>
-            ))
+            )),
           )
           .flat()}
       </div>
