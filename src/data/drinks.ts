@@ -6,14 +6,9 @@ type Drink = {
 
 const drinks: Drink[] = [
   {
-    id: "0",
-    name: "random",
-    color: "grey",
-  },
-  {
     id: "1",
-    name: "lime",
-    color: "lime",
+    name: "coke",
+    color: "crimson",
   },
   {
     id: "2",
@@ -23,22 +18,22 @@ const drinks: Drink[] = [
   {
     id: "3",
     name: "grapefruit",
-    color: "pink",
+    color: "lightpink",
   },
   {
     id: "4",
-    name: "cherry",
-    color: "red",
+    name: "lime",
+    color: "lime",
   },
   {
     id: "5",
-    name: "grape",
-    color: "purple",
+    name: "beer",
+    color: "orange",
   },
   {
     id: "6",
-    name: "orange",
-    color: "orange",
+    name: "random",
+    color: "grey",
   },
 ];
 
