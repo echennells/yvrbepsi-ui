@@ -39,6 +39,13 @@ const chains: { [key: string]: Chain } = {
     logoURI:
       "https://arbiscan.io/assets/arbitrum/images/svg/logos/token-secondary-light.svg?v=24.9.2.0",
   },
+  "0x65": {
+    id: "0x65",
+    token: "SOL",
+    label: "Solana",
+    rpcUrl: "https://api.mainnet-beta.solana.com",
+    logoURI: "/solanaLogoMark.svg",
+  },
 };
 
 export default chains;
