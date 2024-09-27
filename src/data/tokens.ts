@@ -21,6 +21,18 @@ const tokens: { [key: string]: Token[] } = {
       coinKey: "USDC",
     },
   ],
+  "0x65": [
+    {
+      address: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+      chainId: "0x65",
+      symbol: "USDC",
+      decimals: 6,
+      name: "USD Coin",
+      logoURI:
+        "https://static.debank.com/image/coin/logo_url/usdc/e87790bfe0b3f2ea855dc29069b38818.png",
+      coinKey: "USDC",
+    },
+  ],
   "0x89": [
     {
       address: "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",

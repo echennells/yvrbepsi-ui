@@ -105,7 +105,7 @@ export default function Home() {
       subscribed = false;
     };
   }, [tokenChainId, connectedChain, setChain, address, decimals, wallet]);
-
+  const isSolana = tokenChainId === "0x65";
   return (
     <main
       className={`flex min-h-screen flex-col items-center justify-center ${inter.className}`}
@@ -173,23 +173,49 @@ export default function Home() {
 
         <div className="w-96 max-w-full mt-auto">
           <button
-            className={`text-3xl text-white w-full border-8 p-2 border-background-alt ${insufficientBalance ? "bg-gray-500" : "bg-red"}`}
-            disabled={!!insufficientBalance}
+            className={`text-3xl text-white w-full border-8 p-2 border-background-alt ${
+              !isSolana && insufficientBalance ? "bg-gray-500" : "bg-red"
+            }`}
+            disabled={!isSolana && !!insufficientBalance}
             onClick={() => {
-              if (wallet) {
+              if (isSolana) {
+                const solanaPayUrl =
+                  `solana:${config.SOLANA_TREASURY_ADDRESS}` +
+                  `?amount=${(basePrice + donation).toString()}` +
+                  `&spl-token=${address}` +
+                  "&label=YVR%20Bepsi" +
+                  `&message=One%20${encodeURIComponent(
+                    drinks[selected].name
+                  )}%20Bepsi` +
+                  `&memo=YVR-BEPSI:0:${drinks[selected].id}`;
+                window.location.href = solanaPayUrl;
+              } else if (wallet) {
                 buy();
               } else {
                 connect();
               }
             }}
           >
-            {!wallet
-              ? "CONNECT"
-              : insufficientBalance
-                ? "Insufficient Balance"
-                : pending
-                  ? "SENDING..."
-                  : "BUY"}
+            {isSolana ? (
+              <>
+                PAY WITH{" "}
+                <Image
+                  alt="Solana"
+                  className="align-text-bottom inline"
+                  src="/solanaPayLogoMarkWhite.svg"
+                  height={30}
+                  width={80}
+                />
+              </>
+            ) : !wallet ? (
+              "CONNECT"
+            ) : insufficientBalance ? (
+              "Insufficient Balance"
+            ) : pending ? (
+              "SENDING..."
+            ) : (
+              "BUY"
+            )}
           </button>
         </div>
       </div>
