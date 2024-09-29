@@ -14,7 +14,7 @@ import config from "@/constants";
 const inter = VT323({ weight: "400", subsets: ["latin-ext"] });
 
 export default function Home() {
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useState(1);
   const [address, setAddress] = useState<string>();
   const [decimals, setDecimals] = useState<number>();
   const [tokenChainId, setTokenChainId] = useState<string>();
@@ -30,7 +30,10 @@ export default function Home() {
     () =>
       tokenBalance &&
       decimals &&
-      utils.parseUnits((basePrice + donation).toString(), decimals).add(selected).gt(tokenBalance),
+      utils
+        .parseUnits((basePrice + donation).toString(), decimals)
+        .add(selected)
+        .gt(tokenBalance),
     [tokenBalance, selected, decimals, basePrice, donation],
   );
 
@@ -116,16 +119,16 @@ export default function Home() {
         <div className="bg-grey flex flex-col w-full py-2">
           <p className="text-xl">Choose a drink:</p>
           <div className="grid grid-cols-4 grid-flow-row gap-2 pr-12 y-2">
-            {drinks.map(({ id, name, color, price }, index) => (
+            {drinks.map(({ id, name, color, price }) => (
               <button
                 key={id}
                 style={{ backgroundColor: color }}
                 onClick={() => {
-                  setSelected(index);
+                  setSelected(id);
                   setBasePrice(price);
                 }}
                 className={`h-8 text-md text-white ${
-                  selected === index ? "border-background-alt border-4" : ""
+                  selected === id ? "border-background-alt border-4" : ""
                 }`}
               >
                 {name}
@@ -185,7 +188,7 @@ export default function Home() {
                   `&spl-token=${address}` +
                   "&label=YVR%20Bepsi" +
                   `&message=One%20${encodeURIComponent(
-                    drinks[selected].name
+                    drinks[selected].name,
                   )}%20Bepsi` +
                   `&memo=YVR-BEPSI:0:${drinks[selected].id}`;
                 window.location.href = solanaPayUrl;
