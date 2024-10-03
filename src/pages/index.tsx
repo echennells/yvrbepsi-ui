@@ -14,7 +14,7 @@ import config from "@/constants";
 const inter = VT323({ weight: "400", subsets: ["latin-ext"] });
 
 export default function Home() {
-  const [selected, setSelected] = useState(1);
+  const [selected, setSelected] = useState(0);
   const [address, setAddress] = useState<string>();
   const [decimals, setDecimals] = useState<number>();
   const [tokenChainId, setTokenChainId] = useState<string>();
@@ -32,7 +32,7 @@ export default function Home() {
       decimals &&
       utils
         .parseUnits((basePrice + donation).toString(), decimals)
-        .add(selected)
+        .add(parseInt(drinks[selected].id, 10))
         .gt(tokenBalance),
     [tokenBalance, selected, decimals, basePrice, donation],
   );
@@ -60,7 +60,7 @@ export default function Home() {
         .transfer(
           config.RECEIVER_ADDRESS,
           +utils.parseUnits((basePrice + donation).toString(), decimals) +
-            selected,
+            parseInt(drinks[selected].id, 10),
         )
         .then(async (tx: any) => {
           await tx.wait();
@@ -119,16 +119,16 @@ export default function Home() {
         <div className="bg-grey flex flex-col w-full py-2">
           <p className="text-xl">Choose a drink:</p>
           <div className="grid grid-cols-4 grid-flow-row gap-2 pr-12 y-2">
-            {drinks.map(({ id, name, color, price }) => (
+            {drinks.map(({ id, name, color, price }, index) => (
               <button
                 key={id}
                 style={{ backgroundColor: color }}
                 onClick={() => {
-                  setSelected(id);
+                  setSelected(index);
                   setBasePrice(price);
                 }}
                 className={`h-8 text-md text-white ${
-                  selected === id ? "border-background-alt border-4" : ""
+                  selected === index ? "border-background-alt border-4" : ""
                 }`}
               >
                 {name}
