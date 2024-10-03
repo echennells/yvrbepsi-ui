@@ -6,6 +6,11 @@ import { useSetChain } from "@web3-onboard/react";
 
 import banner from "@/assets/bepsi-banner.png";
 import Dropdown from "@/components/dropdown";
+import type { Address } from "@solana/addresses";
+import {
+  findAssociatedTokenPda,
+  TOKEN_PROGRAM_ADDRESS,
+} from "@solana-program/token";
 import { useConnectWallet } from "@web3-onboard/react";
 import drinks from "@/data/drinks";
 import ERC20 from "@/abis/ERC20.json";
@@ -182,16 +187,27 @@ export default function Home() {
             disabled={!isSolana && !!insufficientBalance}
             onClick={() => {
               if (isSolana) {
-                const solanaPayUrl =
-                  `solana:${config.SOLANA_TREASURY_ADDRESS}` +
-                  `?amount=${(basePrice + donation).toString()}` +
-                  `&spl-token=${address}` +
-                  "&label=YVR%20Bepsi" +
-                  `&message=One%20${encodeURIComponent(
-                    drinks[selected].name,
-                  )}%20Bepsi` +
-                  `&memo=YVR-BEPSI:0:${drinks[selected].id}`;
-                window.location.href = solanaPayUrl;
+                // FIXME: When the treasury account is off-curve (as it is here, because it's a
+                // Squads multisig) certain wallets will reject this payment request. As of this
+                // writing those include Backpack and Solflare. To hack around this, we derive the
+                // address of the associated token account and use it as the recipient, even though
+                // this is a violation of the Solana Pay specification.
+                findAssociatedTokenPda({
+                  mint: address as Address,
+                  owner: config.SOLANA_TREASURY_ADDRESS as Address,
+                  tokenProgram: TOKEN_PROGRAM_ADDRESS,
+                }).then(([tokenAccountAddress]) => {
+                  const solanaPayUrl =
+                    `solana:${tokenAccountAddress}` +
+                    `?amount=${(basePrice + donation).toString()}` +
+                    `&spl-token=${address}` +
+                    "&label=YVR%20Bepsi" +
+                    `&message=One%20${encodeURIComponent(
+                      drinks[selected].name
+                    )}%20Bepsi` +
+                    `&memo=YVR-BEPSI:0:${drinks[selected].id}`;
+                  window.location.href = solanaPayUrl;
+                });
               } else if (wallet) {
                 buy();
               } else {
