@@ -40,7 +40,7 @@ const drinks: Drink[] = [
     id: "6",
     name: "beer",
     color: "grey",
-    price: 1,
+    price: 3,
   },
 ];
 
