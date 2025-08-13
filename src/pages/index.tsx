@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useCallback, useState, useEffect, useMemo } from "react";
 import { providers, utils, Contract, BigNumber } from "ethers";
 import { useSetChain } from "@web3-onboard/react";
+import { QRCodeSVG } from "qrcode.react";
 
 import banner from "@/assets/bepsi-banner.png";
 import Dropdown from "@/components/dropdown";
@@ -13,6 +14,7 @@ import {
 } from "@solana-program/token";
 import { useConnectWallet } from "@web3-onboard/react";
 import drinks from "@/data/drinks";
+import lightning from "@/data/lightning";
 import ERC20 from "@/abis/ERC20.json";
 import config from "@/constants";
 
@@ -27,6 +29,8 @@ export default function Home() {
   const [pending, setPending] = useState(false);
   const [basePrice, setBasePrice] = useState(1);
   const [donation, setDonation] = useState(0);
+  const [isBitcoin, setIsBitcoin] = useState(false);
+  const [showQR, setShowQR] = useState(false);
 
   const [{ wallet }, connect] = useConnectWallet();
   const [{ connectedChain }, setChain] = useSetChain();
@@ -116,14 +120,16 @@ export default function Home() {
   const isSolana = tokenChainId === "0x65";
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-center ${inter.className}`}
+      className={`flex min-h-screen flex-col items-center justify-center p-2 ${inter.className}`}
     >
-      <div className="w-96 aspect-[1/2] bg-dull-blue max-w-full flex flex-col gap-2 background-dull-blue items-center justify-start border-8 border-grey relative">
-        <Image src={banner} alt="banner" width={600} height={300} />
+      <div className="w-full max-w-[470px] lg:max-w-[540px] h-[90vh] bg-dull-blue flex flex-col gap-2 background-dull-blue items-center justify-start border-2 border-grey relative">
+        <div className="w-full px-2 pt-2">
+          <Image src={banner} alt="banner" width={600} height={300} className="w-full h-auto" />
+        </div>
 
-        <div className="bg-grey flex flex-col w-full py-2">
+        <div className="bg-grey flex flex-col w-full py-2 px-2">
           <p className="text-xl">Choose a drink:</p>
-          <div className="grid grid-cols-4 grid-flow-row gap-2 pr-12 y-2">
+          <div className="grid grid-cols-3 sm:grid-cols-4 grid-flow-row gap-2 py-2">
             {drinks.map(({ id, name, color, price }, index) => (
               <button
                 key={id}
@@ -132,7 +138,7 @@ export default function Home() {
                   setSelected(index);
                   setBasePrice(price);
                 }}
-                className={`h-8 text-md text-white ${
+                className={`h-10 sm:h-8 text-sm sm:text-md text-white ${
                   selected === index ? "border-background-alt border-4" : ""
                 }`}
               >
@@ -142,14 +148,14 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="bg-grey flex flex-col w-full py-2">
+        <div className="bg-grey flex flex-col w-full py-2 px-2">
           <p className="text-xl">Donation:</p>
-          <div className="grid grid-cols-4 grid-flow-row gap-2 pr-12 y-2">
+          <div className="grid grid-cols-3 grid-flow-row gap-2 py-2">
             {[0, 2, 4].map((val) => (
               <button
                 key={val}
                 onClick={() => setDonation(val)}
-                className={`h-8 text-md text-black ${
+                className={`h-10 sm:h-8 text-sm sm:text-md text-black ${
                   donation === val
                     ? "border-background-alt border-4"
                     : "border-gray-400 border-4"
@@ -161,7 +167,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="bg-grey w-full">
+        <div className="bg-grey w-full px-2">
           <p className="text-xl py-2">Choose a payment:</p>
           <Dropdown
             options={[]}
@@ -169,24 +175,27 @@ export default function Home() {
               setAddress(address);
               setDecimals(decimals);
               setTokenChainId(chainId);
+              setIsBitcoin(address === 'bitcoin');
             }}
           />
           {tokenBalance && (
-            <div className="w-full flex justify-between my-1">
+            <div className="w-full flex justify-between my-1 px-2">
               <p>Balance:</p>
               <p>{utils.formatUnits(tokenBalance, decimals)}</p>
             </div>
           )}
         </div>
 
-        <div className="w-96 max-w-full mt-auto">
+        <div className="w-full mt-auto px-2 pb-2">
           <button
-            className={`text-3xl text-white w-full border-8 p-2 border-background-alt ${
-              !isSolana && insufficientBalance ? "bg-gray-500" : "bg-red"
+            className={`text-2xl sm:text-3xl text-white w-full border-4 p-3 border-background-alt ${
+              !isSolana && !isBitcoin && insufficientBalance ? "bg-gray-500" : "bg-red"
             }`}
-            disabled={!isSolana && !!insufficientBalance}
+            disabled={!isSolana && !isBitcoin && !!insufficientBalance}
             onClick={() => {
-              if (isSolana) {
+              if (isBitcoin) {
+                setShowQR(true);
+              } else if (isSolana) {
                 // FIXME: When the treasury account is off-curve (as it is here, because it's a
                 // Squads multisig) certain wallets will reject this payment request. As of this
                 // writing those include Backpack and Solflare. To hack around this, we derive the
@@ -201,10 +210,10 @@ export default function Home() {
                     `solana:${tokenAccountAddress}` +
                     `?amount=${(basePrice + donation).toString()}` +
                     `&spl-token=${address}` +
-                    "&label=YVR%20Bepsi" +
+                    "&label=YVR%20BEPSI" +
                     `&message=One%20${encodeURIComponent(
                       drinks[selected].name
-                    )}%20Bepsi` +
+                    )}%20BEPSI` +
                     `&memo=YVR-BEPSI:0:${drinks[selected].id}`;
                   window.location.href = solanaPayUrl;
                 });
@@ -215,7 +224,9 @@ export default function Home() {
               }
             }}
           >
-            {isSolana ? (
+            {isBitcoin ? (
+              `PAY WITH ${lightning.icon} BITCOIN`
+            ) : isSolana ? (
               <>
                 PAY WITH{" "}
                 <Image
@@ -238,6 +249,47 @@ export default function Home() {
           </button>
         </div>
       </div>
+
+      {showQR && isBitcoin && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowQR(false)}>
+          <div className="bg-white p-8 rounded-lg" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-2xl mb-4 text-center">Scan to Pay with Lightning</h2>
+            <QRCodeSVG
+              value={lightning.lnurl}
+              size={300}
+              level="M"
+            />
+            <p className="text-sm mt-4 text-center text-gray-600">
+              Pay {(basePrice + donation) * lightning.baseAmount} {lightning.currencyName} for
+              {' '}{drinks[selected].name}
+            </p>
+            <button
+              className="mt-4 w-full bg-blue-500 text-white p-2 rounded mb-2"
+              onClick={() => {
+                navigator.clipboard.writeText(lightning.lnurl);
+                // eslint-disable-next-line no-alert
+                alert('Invoice copied to clipboard!');
+              }}
+            >
+              Copy Invoice
+            </button>
+            <button
+              className="w-full bg-green-500 text-white p-2 rounded mb-2"
+              onClick={() => {
+                window.location.href = `lightning:${lightning.lnurl}`;
+              }}
+            >
+              Open in App
+            </button>
+            <button
+              className="w-full bg-red text-white p-2 rounded"
+              onClick={() => setShowQR(false)}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
