@@ -7,6 +7,7 @@ import { useWallets } from "@web3-onboard/react";
 import config from "@/constants";
 import tokens, { Token } from "@/data/tokens";
 import chains, { Chain } from "@/data/chains";
+import lightning from "@/data/lightning";
 
 interface TokenWithChain extends Token {
   chain: Chain;
@@ -42,7 +43,7 @@ function NativeOption({ symbol, logoURI, chain }: TokenWithChain) {
 
 export default function Dropdown({ options, setToken }: Props) {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<TokenWithChain>();
+  const [selected, setSelected] = useState<TokenWithChain | string>();
   const [{ connectedChain }, setChain] = useSetChain();
 
   const toggle = () => {
@@ -50,10 +51,12 @@ export default function Dropdown({ options, setToken }: Props) {
   };
 
   useEffect(() => {
-    if (selected && setToken) {
+    if (selected && typeof selected !== 'string' && setToken) {
       setToken(selected.address, selected.decimals, selected.chain.id);
+    } else if (selected === 'bitcoin' && setToken) {
+      setToken('bitcoin', 0, 'bitcoin');
     }
-    if (selected && connectedChain && connectedChain.id !== selected.chain.id) {
+    if (selected && typeof selected !== 'string' && connectedChain && connectedChain.id !== selected.chain.id) {
       setChain({ chainId: selected.chain.id.toString() });
     }
   }, [selected, setToken, connectedChain, setChain]);
@@ -66,6 +69,10 @@ export default function Dropdown({ options, setToken }: Props) {
       <div className="w-full">
         {selected === undefined ? (
           <p className="text-lg py-2 px-3">select</p>
+        ) : selected === 'bitcoin' ? (
+          <div className="py-2 px-3 h-12 text-lg flex items-center">
+            {lightning.icon} {lightning.displayName}
+          </div>
         ) : (
           <NativeOption {...(selected as TokenWithChain)} />
         )}
@@ -82,6 +89,14 @@ export default function Dropdown({ options, setToken }: Props) {
           open ? "border-4" : "h-0 border-0"
         } overflow-hidden absolute top-12 -ml-1 -mr-1 left-0 right-0 bg-grey w-[calc(100% + 2px)] border-background`}
       >
+        <div
+          onClick={() => {
+            setSelected('bitcoin');
+          }}
+          className="py-2 px-3 h-12 text-lg flex items-center hover:bg-background cursor-pointer w-full"
+        >
+          {lightning.icon} {lightning.displayName}
+        </div>
         {Object.values(chains)
           .map((chain) =>
             tokens[chain.id.toString()]?.map((option) => (

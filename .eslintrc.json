@@ -1,3 +1,18 @@
 {
-  "extends": "next/core-web-vitals"
+  "extends": "next/core-web-vitals",
+  "rules": {
+    "quotes": "off",
+    "no-unused-vars": "off",
+    "import/extensions": "off",
+    "import/no-duplicates": "off",
+    "no-undef": "off",
+    "object-curly-newline": "off",
+    "implicit-arrow-linebreak": "off",
+    "operator-linebreak": "off",
+    "no-shadow": "off",
+    "comma-dangle": "off",
+    "no-nested-ternary": "off",
+    "function-paren-newline": "off",
+    "import/prefer-default-export": "off"
+  }
 }

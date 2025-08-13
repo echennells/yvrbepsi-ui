@@ -17,7 +17,7 @@ const wallets = [
     options: {
       dappMetadata: {
         url: "https://bepsi.dctrl.wtf",
-        name: "YVR Bepsi",
+        name: "YVR BEPSI",
       },
       extensionOnly: false,
     },
@@ -31,10 +31,10 @@ const wallets = [
 ];
 
 const appMetadata = {
-  name: "YVR Bepsi",
+  name: "YVR BEPSI",
   icon,
   logo,
-  description: "Frontend for YVR Bepsi Machine",
+  description: "Frontend for YVR BEPSI Machine",
 };
 
 export default function OnboardProvider({

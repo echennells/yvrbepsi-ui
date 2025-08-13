@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@safe-global/safe-apps-provider": "^0.18.6",
+    "@safe-global/safe-apps-sdk": "^9.1.0",
     "@solana-program/token": "^0.3.1",
     "@solana/addresses": "^2.0.0-rc.1",
     "@tanstack/react-query": "^4.29.19",
@@ -29,6 +31,7 @@
     "ethers": "^5.7.2",
     "next": "13.4.9",
     "postcss": "8.4.25",
+    "qrcode.react": "^4.2.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sharp": "^0.33.5",
