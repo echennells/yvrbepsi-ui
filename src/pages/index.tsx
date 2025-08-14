@@ -232,7 +232,7 @@ export default function Home() {
                 <Image
                   alt="Solana"
                   className="align-text-bottom inline"
-                  src="/solanaPayLogoMarkWhite.svg"
+                  src="/bepsi/solanaPayLogoMarkWhite.svg"
                   height={30}
                   width={80}
                 />
