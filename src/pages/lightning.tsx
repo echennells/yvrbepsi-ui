@@ -56,7 +56,7 @@ export default function Lightning() {
                   setSelected(index);
                   setBasePrice(price);
                 }}
-                className={`h-16 sm:h-14 text-xl sm:text-2xl text-white ${
+                className={`h-16 sm:h-14 text-3xl sm:text-4xl text-white ${
                   selected === index ? "border-background-alt border-4" : ""
                 }`}
               >
@@ -103,7 +103,7 @@ export default function Lightning() {
           
           <button 
             onClick={() => router.push('/')}
-            className="w-full bg-background text-white py-2 px-4 text-lg hover:bg-background-alt transition-colors border-4 border-background-alt mt-2"
+            className="w-full bg-background text-white py-3 px-4 text-2xl hover:bg-background-alt transition-colors border-4 border-background-alt mt-2"
           >
             Back to Home
           </button>
