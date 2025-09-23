@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "NEXT_SWC_BINARY_PATH= next build",
     "start": "next start",
     "serve": "serve out -l 3000",
     "lint": "next lint"
