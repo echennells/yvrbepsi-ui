@@ -6,8 +6,12 @@ const nextConfig = {
     unoptimized: true,
   },
   swcMinify: false,
+  compiler: {
+    removeConsole: false,
+  },
   experimental: {
     forceSwcTransforms: false,
+    swcTraceProfiling: false,
   },
 };
 
