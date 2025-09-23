@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3001:3000"
+    volumes:
+      # Mount source code for development (optional)
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+
+  # Alternative service for testing builds
+  app-build:
+    build: .
+    ports:
+      - "3002:3000"
+    environment:
+      - NODE_ENV=production
+    command: sh -c "npm run build && npm start"
+
+  # Service to just test npm install and show warnings
+  npm-test:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: sh -c "npm ci --verbose && echo 'Dependencies installed successfully'"
