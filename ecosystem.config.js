@@ -2,11 +2,11 @@ module.exports = {
   apps: [{
     name: 'yvrbepsi-ui',
     script: 'npm',
-    args: 'run dev',
+    args: 'run serve',
     cwd: '/home/ubuntu/bepsi-pi/yvrbepsi-ui',
     env: {
-      NODE_ENV: 'development',
-      PORT: 3001
+      NODE_ENV: 'production',
+      PORT: 3000
     },
     max_restarts: 10,
     min_uptime: '10s',

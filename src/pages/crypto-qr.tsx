@@ -8,7 +8,7 @@ const inter = VT323({ weight: "400", subsets: ["latin-ext"] });
 
 export default function CryptoQR() {
   const router = useRouter();
-  
+
   // The URL that will be encoded in the QR code - pointing to the crypto payment page
   const cryptoUrl = "https://bepsi.dctrl.wtf/crypto";
 
@@ -20,20 +20,20 @@ export default function CryptoQR() {
         <div className="w-full flex flex-col items-center h-full">
           {/* Logo matching lightning page size */}
           <div className="w-full px-2 pt-2">
-            <Image 
-              src={banner} 
-              alt="banner" 
-              width={600} 
-              height={300} 
-              className="w-full h-auto" 
+            <Image
+              src={banner}
+              alt="banner"
+              width={600}
+              height={300}
+              className="w-full h-auto"
               priority
             />
           </div>
-          
+
           <div className="flex-1 w-full px-2 flex flex-col justify-start">
             <div className="bg-grey w-full p-6 rounded-sm flex flex-col items-center">
               <h2 className="text-5xl text-center mb-6 mt-6">Scan with Your Phone</h2>
-            
+
             <div className="bg-grey p-3 rounded">
               <QRCodeSVG
                 value={cryptoUrl}
@@ -44,8 +44,8 @@ export default function CryptoQR() {
                 bgColor="#E5E7EB"
               />
             </div>
-            
-              <button 
+
+              <button
                 onClick={() => router.push('/')}
                 className="w-full bg-background text-white py-3 px-4 text-xl hover:bg-background-alt transition-colors border-4 border-background-alt mt-6"
               >

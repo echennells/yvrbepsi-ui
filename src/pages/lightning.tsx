@@ -29,15 +29,12 @@ export default function Lightning() {
 
   const getLnurlForSelection = () => {
     if (selected === null) return lightning.lnurl;
-    
     const multiplier = getMultiplierKey(donation);
     const drink = drinks[selected];
-    
     // Use multiplier-specific LNURL if available, otherwise fall back to base LNURL
     if (drink.lnurls && drink.lnurls[multiplier]) {
       return drink.lnurls[multiplier];
     }
-    
     return drink.lnurl;
   };
 
@@ -55,14 +52,11 @@ export default function Lightning() {
   };
 
   const basePrice = selected !== null ? drinks[selected].price : 505;
-  
   const getTotalAmount = () => {
     if (selected === null) return basePrice;
-    
     const multiplierKey = getMultiplierKey(donation);
     return drinks[selected].bepsiAmounts[multiplierKey];
   };
-  
   const totalAmount = getTotalAmount();
 
   return (
@@ -159,13 +153,6 @@ export default function Lightning() {
             />
             <p className="text-3xl mt-6 mb-2 text-center font-bold">
               {selected !== null ? drinks[selected].name.toUpperCase() : ""}
-            </p>
-            {/* Debug: Show multiplier and last 10 chars of LNURL */}
-            <p className="text-xs text-gray-500 text-center">
-              Multiplier: {getMultiplierKey(donation)} | 
-              {getLnurlForSelection() ? 
-                ` ...${getLnurlForSelection().slice(-10)}` : 
-                ' No LNURL'}
             </p>
             <p className="text-4xl font-bold text-center mb-4">
               {totalAmount} BEPSI
