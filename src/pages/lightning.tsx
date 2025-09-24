@@ -21,21 +21,10 @@ export default function Lightning() {
     setDonation(0);
   };
 
-  const getMultiplierKey = (donationValue: number): '1x' | '3x' | '5x' => {
-    if (donationValue === 0) return '1x';
-    if (donationValue === 2) return '3x';
-    return '5x';
-  };
 
   const getLnurlForSelection = () => {
     if (selected === null) return lightning.lnurl;
-    const multiplier = getMultiplierKey(donation);
-    const drink = drinks[selected];
-    // Use multiplier-specific LNURL if available, otherwise fall back to base LNURL
-    if (drink.lnurls && drink.lnurls[multiplier]) {
-      return drink.lnurls[multiplier];
-    }
-    return drink.lnurl;
+    return drinks[selected].lnurl;
   };
 
   const handlePayClick = () => {
@@ -45,7 +34,6 @@ export default function Lightning() {
     } else {
       const lnurl = getLnurlForSelection();
       console.log('Selected drink:', drinks[selected].name);
-      console.log('Multiplier:', getMultiplierKey(donation));
       console.log('LNURL:', lnurl);
       setShowQR(true);
     }
@@ -54,7 +42,7 @@ export default function Lightning() {
   const basePrice = selected !== null ? drinks[selected].price : 505;
   const getTotalAmount = () => {
     if (selected === null) return basePrice;
-    const multiplierKey = getMultiplierKey(donation);
+    const multiplierKey = donation === 0 ? '1x' : donation === 2 ? '3x' : '5x';
     return drinks[selected].bepsiAmounts[multiplierKey];
   };
   const totalAmount = getTotalAmount();
