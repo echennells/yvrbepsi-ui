@@ -83,7 +83,7 @@ export default function Splash() {
                   className="w-full bg-background text-white py-5 px-4 hover:bg-background-alt transition-colors border-4 border-background-alt"
                 >
                   <div className="text-3xl font-bold mb-1">
-                    ⚡ LIGHTNING
+                  <span className="text-amber-500 text-2xl">₿</span> BITCOIN
                   </div>
                   <p className="text-base opacity-80">Pay with Bitcoin Lightning Network</p>
                 </button>
