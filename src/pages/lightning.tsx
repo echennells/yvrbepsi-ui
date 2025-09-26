@@ -54,7 +54,7 @@ export default function Lightning() {
     }
   };
 
-  const basePrice = selected !== null ? drinks[selected].price : 505;
+  const basePrice = selected !== null ? drinks[selected].price : 500;
   const getTotalAmount = () => {
     if (selected === null) return basePrice;
     const multiplierKey = donation === 0 ? '1x' : donation === 2 ? '3x' : '5x';
