@@ -54,7 +54,7 @@ export default function Lightning() {
     }
   };
 
-  const basePrice = selected !== null ? drinks[selected].price : 500;
+  const basePrice = selected !== null ? drinks[selected].price : 1000;
   const getTotalAmount = () => {
     if (selected === null) return basePrice;
     const multiplierKey = donation === 0 ? '1x' : donation === 2 ? '3x' : '5x';
@@ -185,7 +185,7 @@ export default function Lightning() {
               {selected !== null ? drinks[selected].name.toUpperCase() : ""}
             </p>
             <p className="text-4xl font-bold text-center mb-4">
-              {totalAmount} SATS
+              {totalAmount} SATS / {sparkBepsiAmount} BEPSI
             </p>
             <div className="mt-4 flex gap-4">
               <button
