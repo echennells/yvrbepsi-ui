@@ -1,6 +1,6 @@
 import { VT323 } from "next/font/google";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { QRCodeSVG } from "qrcode.react";
 import banner from "@/assets/bepsi-banner.png";
@@ -16,11 +16,56 @@ export default function Lightning() {
   const [showQR, setShowQR] = useState(false);
   const [showSparkQR, setShowSparkQR] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   const clearSelection = () => {
     setSelected(null);
     setDonation(0);
+    setShowQR(false);
+    setShowSparkQR(false);
+    setPaymentSuccess(false);
   };
+
+  // SSE connection for payment notifications
+  useEffect(() => {
+    const eventSource = new EventSource('http://localhost:3500/payment-events');
+
+    eventSource.onopen = () => {
+      console.log('[SSE] Connected to payment events');
+    };
+
+    eventSource.onmessage = (event) => {
+      try {
+        const payment = JSON.parse(event.data);
+        console.log('[SSE] Received payment:', payment);
+
+        // Check if payment is for the currently open Spark dialog
+        if (showSparkQR && selected !== null && payment.event === 'payment_received') {
+          const currentSparkAddress = drinks[selected].sparkAddress;
+          if (payment.address === currentSparkAddress) {
+            console.log('[SSE] Payment matched current dialog!');
+            setPaymentSuccess(true);
+
+            // Close dialog and return to main after 3 seconds
+            setTimeout(() => {
+              clearSelection();
+            }, 3000);
+          }
+        }
+      } catch (error) {
+        console.error('[SSE] Error parsing payment event:', error);
+      }
+    };
+
+    eventSource.onerror = (error) => {
+      console.error('[SSE] Connection error:', error);
+    };
+
+    return () => {
+      console.log('[SSE] Closing connection');
+      eventSource.close();
+    };
+  }, [showSparkQR, selected]);
 
 
   const getLnurlForSelection = () => {
@@ -207,24 +252,37 @@ export default function Lightning() {
       {showSparkQR && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowSparkQR(false)}>
           <div className="bg-white p-8 rounded-lg" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-2xl mb-4 text-center">Scan to Pay with Spark</h2>
-            <QRCodeSVG
-              value={getSparkAddressForSelection()}
-              size={300}
-              level="M"
-            />
-            <p className="text-3xl mt-6 mb-2 text-center font-bold">
-              {selected !== null ? drinks[selected].name.toUpperCase() : ""}
-            </p>
-            <p className="text-4xl font-bold text-center mb-4">
-              {totalAmount} SATS / {sparkBepsiAmount} BEPSI
-            </p>
-            <button
-              className="mt-4 w-full bg-red text-white p-4 rounded text-2xl font-bold"
-              onClick={() => setShowSparkQR(false)}
-            >
-              Close
-            </button>
+            {paymentSuccess ? (
+              <div className="text-center">
+                <div className="text-6xl mb-4">✅</div>
+                <h2 className="text-3xl mb-4 text-green-600 font-bold">Payment Received!</h2>
+                <p className="text-2xl mb-2">
+                  Dispensing {selected !== null ? drinks[selected].name : ""}...
+                </p>
+                <p className="text-lg text-gray-600">Returning to main screen...</p>
+              </div>
+            ) : (
+              <>
+                <h2 className="text-2xl mb-4 text-center">Scan to Pay with Spark</h2>
+                <QRCodeSVG
+                  value={getSparkAddressForSelection()}
+                  size={300}
+                  level="M"
+                />
+                <p className="text-3xl mt-6 mb-2 text-center font-bold">
+                  {selected !== null ? drinks[selected].name.toUpperCase() : ""}
+                </p>
+                <p className="text-4xl font-bold text-center mb-4">
+                  {totalAmount} SATS / {sparkBepsiAmount} BEPSI
+                </p>
+                <button
+                  className="mt-4 w-full bg-red text-white p-4 rounded text-2xl font-bold"
+                  onClick={() => setShowSparkQR(false)}
+                >
+                  Close
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

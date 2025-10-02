@@ -85,7 +85,7 @@ export default function Splash() {
                   <div className="text-3xl font-bold mb-1">
                   <span className="text-amber-500 text-2xl">₿</span> BITCOIN
                   </div>
-                  <p className="text-base opacity-80">Pay with Bitcoin Lightning Network</p>
+                  <p className="text-base opacity-80">Pay with Lightning or Spark</p>
                 </button>
               </div>
             </div>

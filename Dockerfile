@@ -15,7 +15,7 @@ RUN apk add --no-cache \
 COPY package*.json ./
 
 # Install dependencies with verbose logging to catch issues
-RUN npm ci --verbose --no-audit --no-fund
+RUN npm install --verbose --no-audit --no-fund
 
 # Copy source code
 COPY . .
