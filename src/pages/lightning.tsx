@@ -28,7 +28,8 @@ export default function Lightning() {
 
   // SSE connection for payment notifications
   useEffect(() => {
-    const eventSource = new EventSource('http://localhost:3500/payment-events');
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3500';
+    const eventSource = new EventSource(`${backendUrl}/payment-events`);
 
     eventSource.onopen = () => {
       console.log('[SSE] Connected to payment events');
