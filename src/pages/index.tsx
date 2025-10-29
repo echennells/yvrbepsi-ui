@@ -92,18 +92,19 @@ export default function Home() {
         }
 
         // Check if payment is for the currently open Ark dialog
-        if (showQR && paymentMethod === 'arkade' && selected !== null && payment.event === 'payment_received') {
-          // Ark payments come through with address = "arkade"
-          if (payment.address === 'arkade') {
-            console.log('[SSE] Ark payment matched current dialog!');
-            setPaymentSuccess(true);
+        // DISABLED FOR TESTING - need to see raw WebSocket messages first
+        // if (showQR && paymentMethod === 'arkade' && selected !== null && payment.event === 'payment_received') {
+        //   // Ark payments come through with address = "arkade"
+        //   if (payment.address === 'arkade') {
+        //     console.log('[SSE] Ark payment matched current dialog!');
+        //     setPaymentSuccess(true);
 
-            // Close dialog and return to main after 3 seconds
-            setTimeout(() => {
-              clearSelection();
-            }, 3000);
-          }
-        }
+        //     // Close dialog and return to main after 3 seconds
+        //     setTimeout(() => {
+        //       clearSelection();
+        //     }, 3000);
+        //   }
+        // }
       } catch (error) {
         console.error('[SSE] Error parsing payment event:', error);
       }
