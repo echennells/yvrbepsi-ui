@@ -61,7 +61,21 @@ export default function Lightning() {
         if (showSparkQR && selected !== null && payment.event === 'payment_received') {
           const currentSparkAddress = drinks[selected].sparkAddress;
           if (payment.address === currentSparkAddress) {
-            console.log('[SSE] Payment matched current dialog!');
+            console.log('[SSE] Spark payment matched current dialog!');
+            setPaymentSuccess(true);
+
+            // Close dialog and return to main after 3 seconds
+            setTimeout(() => {
+              clearSelection();
+            }, 3000);
+          }
+        }
+
+        // Check if payment is for the currently open Ark dialog
+        if (showArkQR && selected !== null && payment.event === 'payment_received') {
+          // Ark payments come through with address = "arkade"
+          if (payment.address === 'arkade') {
+            console.log('[SSE] Ark payment matched current dialog!');
             setPaymentSuccess(true);
 
             // Close dialog and return to main after 3 seconds
@@ -83,35 +97,7 @@ export default function Lightning() {
       console.log('[SSE] Closing connection');
       eventSource.close();
     };
-  }, [showSparkQR, selected]);
-
-  // Poll Ark invoice status
-  useEffect(() => {
-    if (!invoice || !showArkQR || paymentSuccess) return;
-
-    const pollInterval = setInterval(async () => {
-      try {
-        const response = await fetch(
-          `${ark.baseUrl}/invoice/status?invoiceId=${invoice.invoiceId}`
-        );
-        const data = await response.json();
-
-        console.log('[Ark] Invoice status:', data.status);
-
-        if (data.status === 'Settled' || data.status === 'Processing') {
-          console.log('[Ark] Payment received!');
-          setPaymentSuccess(true);
-          setTimeout(() => {
-            clearSelection();
-          }, 3000);
-        }
-      } catch (error) {
-        console.error('[Ark] Error polling invoice:', error);
-      }
-    }, 2000);
-
-    return () => clearInterval(pollInterval);
-  }, [invoice, showArkQR, paymentSuccess]);
+  }, [showSparkQR, showArkQR, selected]);
 
   const createInvoice = async (choiceKey: string): Promise<BTCPayInvoice | null> => {
     try {
@@ -272,7 +258,7 @@ export default function Lightning() {
               }`}
               onClick={handlePayClick}
             >
-              PAY WITH ⚡ LIGHTNING
+              ⚡ LIGHTNING
             </button>
             <button
               className={`text-xl sm:text-2xl text-white border-4 p-3 border-background-alt ${
