@@ -1,6 +1,7 @@
 import { VT323 } from "next/font/google";
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 import { QRCodeSVG } from "qrcode.react";
 import banner from "@/assets/bepsi-banner.png";
 import drinks from "@/data/drinks";
@@ -23,6 +24,7 @@ interface BTCPayInvoice {
 type PaymentMethod = 'lightning' | 'spark' | 'arkade' | 'crypto' | null;
 
 export default function Home() {
+  const router = useRouter();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [showQR, setShowQR] = useState(false);
@@ -227,7 +229,7 @@ export default function Home() {
 
               <div className="flex flex-col gap-3">
                 <button
-                  onClick={() => setPaymentMethod('crypto')}
+                  onClick={() => router.push('/crypto-qr')}
                   className="w-full bg-background text-white py-5 px-4 hover:bg-background-alt transition-colors border-4 border-background-alt"
                 >
                   <div className="text-3xl font-bold mb-1">
@@ -350,6 +352,17 @@ export default function Home() {
                 </button>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Loading overlay for Ark invoice creation */}
+      {isCreatingInvoice && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-lg text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
+            <h2 className="text-2xl font-bold mb-2">Generating Invoice...</h2>
+            <p className="text-gray-600">Please wait while we create your Arkade invoice</p>
           </div>
         </div>
       )}
