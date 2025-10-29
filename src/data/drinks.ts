@@ -12,6 +12,7 @@ type Drink = {
   };
   lnurl: string;
   sparkAddress: string;
+  arkChoiceKey: string; // BTCPay POS tray identifier
 };
 
 const drinks: Drink[] = [
@@ -29,6 +30,7 @@ const drinks: Drink[] = [
     },
     lnurl: "LNURL1DP68GURN8GHJ7AR0WFHX7ER99E38YMMYD9JJUUN0VD4HXTMZD96XXMMFDEEHW6T5VD5Z7CTSDYHHVVF0D3H82UNV9AYRYCJWVSEHQ32SWPKN24ECGA6HJNRKDP6HV0MSD9HR6DF3XC37DVM2",
     sparkAddress: "sp1pgssxuw6sy63ju52lcsjyal3z6sazg8zcwlpdufns6f6y08dzaypqwh6gfa969",
+    arkChoiceKey: "tray-0",
   },
   {
     id: "2",
@@ -44,6 +46,7 @@ const drinks: Drink[] = [
     },
     lnurl: "LNURL1DP68GURN8GHJ7AR0WFHX7ER99E38YMMYD9JJUUN0VD4HXTMZD96XXMMFDEEHW6T5VD5Z7CTSDYHHVVF0D3H82UNV9AYRYCJWVSEHQ32SWPKN24ECGA6HJNRKDP6HV0MSD9HR6DF3XU75025S",
     sparkAddress: "sp1pgssxzh93wrep5vh4vwxjufhafr4gpve5z8mmdusmfqhyv3uegh6kqkst95g22",
+    arkChoiceKey: "tray-1",
   },
   {
     id: "3",
@@ -59,6 +62,7 @@ const drinks: Drink[] = [
     },
     lnurl: "LNURL1DP68GURN8GHJ7AR0WFHX7ER99E38YMMYD9JJUUN0VD4HXTMZD96XXMMFDEEHW6T5VD5Z7CTSDYHHVVF0D3H82UNV9AYRYCJWVSEHQ32SWPKN24ECGA6HJNRKDP6HV0MSD9HR6DF38Q4KWZMZ",
     sparkAddress: "sp1pgssxzqtsuypnx7r80f35frs8j4l7x47hp49rsyhmeyzwt8rctp08athgd8lkt",
+    arkChoiceKey: "tray-2",
   },
   {
     id: "4",
@@ -74,6 +78,7 @@ const drinks: Drink[] = [
     },
     lnurl: "LNURL1DP68GURN8GHJ7AR0WFHX7ER99E38YMMYD9JJUUN0VD4HXTMZD96XXMMFDEEHW6T5VD5Z7CTSDYHHVVF0D3H82UNV9AYRYCJWVSEHQ32SWPKN24ECGA6HJNRKDP6HV0MSD9HR6DFJXSFVJS8K",
     sparkAddress: "sp1pgss94dkzp5g0x57ladsp389j5hgrm85aznurgr8j5cuyd7pa65a9un54vahvf",
+    arkChoiceKey: "tray-3",
   },
   {
     id: "5",
@@ -89,6 +94,7 @@ const drinks: Drink[] = [
     },
     lnurl: "LNURL1DP68GURN8GHJ7AR0WFHX7ER99E38YMMYD9JJUUN0VD4HXTMZD96XXMMFDEEHW6T5VD5Z7CTSDYHHVVF0D3H82UNV9AYRYCJWVSEHQ32SWPKN24ECGA6HJNRKDP6HV0MSD9HR6DFJX5XXSKGV",
     sparkAddress: "sp1pgssx2y79dgxumz335fhl64jqe4mcva5z4k9pcs3ljf2nq9cz43wrh0rpu5sw2",
+    arkChoiceKey: "tray-4",
   },
   {
     id: "6",
@@ -104,6 +110,7 @@ const drinks: Drink[] = [
     },
     lnurl: "LNURL1DP68GURN8GHJ7AR0WFHX7ER99E38YMMYD9JJUUN0VD4HXTMZD96XXMMFDEEHW6T5VD5Z7CTSDYHHVVF0D3H82UNV9AYRYCJWVSEHQ32SWPKN24ECGA6HJNRKDP6HV0MSD9HR6DFJ8QNS4JER",
     sparkAddress: "sp1pgss8taqlw2vhd2pfqzg4y753fpz2heavhztlrt6nh32xek6qvdu5emf7zaggp",
+    arkChoiceKey: "tray-5",
   },
 ];
 

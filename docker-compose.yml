@@ -12,6 +12,8 @@ services:
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}
+      - NEXT_PUBLIC_BTCPAY_POS_URL=${NEXT_PUBLIC_BTCPAY_POS_URL}
+      - NEXT_PUBLIC_BTCPAY_BASE_URL=${NEXT_PUBLIC_BTCPAY_BASE_URL}
     command: npm run dev
 
   # Alternative service for testing builds

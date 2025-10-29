@@ -6,8 +6,20 @@ import { QRCodeSVG } from "qrcode.react";
 import banner from "@/assets/bepsi-banner.png";
 import drinks from "@/data/drinks";
 import lightning from "@/data/lightning";
+import ark from "@/data/ark";
 
 const inter = VT323({ weight: "400", subsets: ["latin-ext"] });
+
+interface BTCPayInvoice {
+  invoiceId: string;
+  address: string;
+  due: string;
+  status: string;
+  paymentMethodCurrency: string;
+  itemDesc: string;
+  invoiceBitcoinUrl: string;
+  invoiceBitcoinUrlQR: string;
+}
 
 export default function Lightning() {
   const router = useRouter();
@@ -15,15 +27,20 @@ export default function Lightning() {
   const [donation, setDonation] = useState(0);
   const [showQR, setShowQR] = useState(false);
   const [showSparkQR, setShowSparkQR] = useState(false);
+  const [showArkQR, setShowArkQR] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [invoice, setInvoice] = useState<BTCPayInvoice | null>(null);
+  const [isCreatingInvoice, setIsCreatingInvoice] = useState(false);
 
   const clearSelection = () => {
     setSelected(null);
     setDonation(0);
     setShowQR(false);
     setShowSparkQR(false);
+    setShowArkQR(false);
     setPaymentSuccess(false);
+    setInvoice(null);
   };
 
   // SSE connection for payment notifications
@@ -68,6 +85,59 @@ export default function Lightning() {
     };
   }, [showSparkQR, selected]);
 
+  // Poll Ark invoice status
+  useEffect(() => {
+    if (!invoice || !showArkQR || paymentSuccess) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const response = await fetch(
+          `${ark.baseUrl}/invoice/status?invoiceId=${invoice.invoiceId}`
+        );
+        const data = await response.json();
+
+        console.log('[Ark] Invoice status:', data.status);
+
+        if (data.status === 'Settled' || data.status === 'Processing') {
+          console.log('[Ark] Payment received!');
+          setPaymentSuccess(true);
+          setTimeout(() => {
+            clearSelection();
+          }, 3000);
+        }
+      } catch (error) {
+        console.error('[Ark] Error polling invoice:', error);
+      }
+    }, 2000);
+
+    return () => clearInterval(pollInterval);
+  }, [invoice, showArkQR, paymentSuccess]);
+
+  const createInvoice = async (choiceKey: string): Promise<BTCPayInvoice | null> => {
+    try {
+      console.log('[Ark] Creating invoice via API for:', choiceKey);
+
+      const response = await fetch('/api/ark-invoice', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ choiceKey }),
+      });
+
+      if (!response.ok) {
+        console.error('[Ark] API error:', response.status);
+        return null;
+      }
+
+      const invoiceData: BTCPayInvoice = await response.json();
+      console.log('[Ark] Invoice created:', invoiceData);
+      return invoiceData;
+    } catch (error) {
+      console.error('[Ark] Error creating invoice:', error);
+      return null;
+    }
+  };
 
   const getLnurlForSelection = () => {
     if (selected === null) return lightning.lnurl;
@@ -97,6 +167,26 @@ export default function Lightning() {
       setTimeout(() => setShowAlert(false), 2000);
     } else {
       setShowSparkQR(true);
+    }
+  };
+
+  const handleArkPayClick = async () => {
+    if (selected === null) {
+      setShowAlert(true);
+      setTimeout(() => setShowAlert(false), 2000);
+      return;
+    }
+
+    setIsCreatingInvoice(true);
+    const choiceKey = drinks[selected].arkChoiceKey;
+    const newInvoice = await createInvoice(choiceKey);
+    setIsCreatingInvoice(false);
+
+    if (newInvoice) {
+      setInvoice(newInvoice);
+      setShowArkQR(true);
+    } else {
+      alert('Failed to create invoice. Please try again.');
     }
   };
 
@@ -175,9 +265,9 @@ export default function Lightning() {
         )}
 
         <div className="w-full mt-auto px-2 pb-2">
-          <div className="flex gap-2 mb-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2">
             <button
-              className={`text-2xl sm:text-3xl text-white flex-1 border-4 p-3 border-background-alt ${
+              className={`text-xl sm:text-2xl text-white border-4 p-3 border-background-alt ${
                 selected !== null ? "bg-red" : "bg-gray-500"
               }`}
               onClick={handlePayClick}
@@ -185,18 +275,30 @@ export default function Lightning() {
               PAY WITH ⚡ LIGHTNING
             </button>
             <button
-              className={`text-2xl sm:text-3xl text-white flex-1 border-4 p-3 border-background-alt ${
+              className={`text-xl sm:text-2xl text-white border-4 p-3 border-background-alt ${
                 selected !== null ? "bg-blue-600" : "bg-gray-500"
               }`}
               onClick={handleSparkPayClick}
             >
-              <div className="inline-flex items-center">
+              <div className="inline-flex items-center justify-center">
                 <div className="bg-black p-1 rounded mr-2">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-white">
                     <path d="M12 2L13.5 8.5L20 7L14.5 12L20 17L13.5 15.5L12 22L10.5 15.5L4 17L9.5 12L4 7L10.5 8.5L12 2Z" fill="currentColor"/>
                   </svg>
                 </div>
-                PAY WITH SPARK
+                SPARK
+              </div>
+            </button>
+            <button
+              className={`text-xl sm:text-2xl text-white border-4 p-3 border-background-alt ${
+                selected !== null && !isCreatingInvoice ? "bg-purple-600" : "bg-gray-500"
+              } ${isCreatingInvoice ? "opacity-50 cursor-wait" : ""}`}
+              onClick={handleArkPayClick}
+              disabled={isCreatingInvoice}
+            >
+              <div className="inline-flex items-center justify-center">
+                <span className="text-2xl mr-2">{ark.icon}</span>
+                {isCreatingInvoice ? "..." : "ARKADE"}
               </div>
             </button>
           </div>
@@ -279,6 +381,44 @@ export default function Lightning() {
                 <button
                   className="mt-4 w-full bg-red text-white p-4 rounded text-2xl font-bold"
                   onClick={() => setShowSparkQR(false)}
+                >
+                  Close
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {showArkQR && invoice && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => !paymentSuccess && setShowArkQR(false)}>
+          <div className="bg-white p-8 rounded-lg" onClick={(e) => e.stopPropagation()}>
+            {paymentSuccess ? (
+              <div className="text-center">
+                <div className="text-6xl mb-4">✅</div>
+                <h2 className="text-3xl mb-4 text-green-600 font-bold">Payment Received!</h2>
+                <p className="text-2xl mb-2">
+                  Dispensing {selected !== null ? drinks[selected].name : ""}...
+                </p>
+                <p className="text-lg text-gray-600">Returning to main screen...</p>
+              </div>
+            ) : (
+              <>
+                <h2 className="text-2xl mb-4 text-center">Scan to Pay with Arkade</h2>
+                <QRCodeSVG
+                  value={invoice.invoiceBitcoinUrlQR}
+                  size={300}
+                  level="M"
+                />
+                <p className="text-3xl mt-6 mb-2 text-center font-bold">
+                  {selected !== null ? drinks[selected].name.toUpperCase() : ""}
+                </p>
+                <p className="text-4xl font-bold text-center mb-4">
+                  {invoice.due} {invoice.paymentMethodCurrency}
+                </p>
+                <button
+                  className="mt-4 w-full bg-red text-white p-4 rounded text-2xl font-bold"
+                  onClick={() => setShowArkQR(false)}
                 >
                   Close
                 </button>
