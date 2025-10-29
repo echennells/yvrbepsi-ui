@@ -21,7 +21,7 @@ interface BTCPayInvoice {
   invoiceBitcoinUrlQR: string;
 }
 
-type PaymentMethod = 'lightning' | 'spark' | 'arkade' | 'crypto' | null;
+type PaymentMethod = 'lightning' | 'spark' | 'arkade' | 'bitcoin' | 'crypto' | null;
 
 export default function Home() {
   const router = useRouter();
@@ -148,8 +148,8 @@ export default function Home() {
   const handleDrinkSelection = async (index: number) => {
     setSelected(index);
 
-    // If arkade, create invoice first
-    if (paymentMethod === 'arkade') {
+    // If arkade or bitcoin, create invoice first
+    if (paymentMethod === 'arkade' || paymentMethod === 'bitcoin') {
       setIsCreatingInvoice(true);
       const choiceKey = drinks[index].arkChoiceKey;
       const newInvoice = await createInvoice(choiceKey);
@@ -199,6 +199,8 @@ export default function Home() {
       return getSparkAddressForSelection();
     } else if (paymentMethod === 'arkade' && invoice) {
       return invoice.invoiceBitcoinUrlQR;
+    } else if (paymentMethod === 'bitcoin' && invoice) {
+      return invoice.address;
     }
     return '';
   };
@@ -207,6 +209,7 @@ export default function Home() {
     if (paymentMethod === 'lightning') return 'Scan to Pay with Lightning';
     if (paymentMethod === 'spark') return 'Scan to Pay with Spark';
     if (paymentMethod === 'arkade') return 'Scan to Pay with Arkade';
+    if (paymentMethod === 'bitcoin') return 'Scan to Pay with Bitcoin';
     return '';
   };
 
@@ -236,6 +239,16 @@ export default function Home() {
                     💰 CRYPTO
                   </div>
                   <p className="text-base opacity-80">Pay with USDC or ETH</p>
+                </button>
+
+                <button
+                  onClick={() => setPaymentMethod('bitcoin')}
+                  className="w-full bg-orange-500 text-white py-5 px-4 hover:opacity-90 transition-colors border-4 border-background-alt"
+                >
+                  <div className="text-3xl font-bold mb-1">
+                    ₿ BITCOIN
+                  </div>
+                  <p className="text-base opacity-80">Bitcoin on-chain</p>
                 </button>
 
                 <button
@@ -336,7 +349,7 @@ export default function Home() {
                   {selected !== null ? drinks[selected].name.toUpperCase() : ""}
                 </p>
                 <p className="text-4xl font-bold text-center mb-4">
-                  {paymentMethod === 'arkade' && invoice
+                  {(paymentMethod === 'arkade' || paymentMethod === 'bitcoin') && invoice
                     ? `${invoice.due} ${invoice.paymentMethodCurrency}`
                     : `${totalAmount} SATS / ${sparkBepsiAmount} BEPSI`
                   }
@@ -356,13 +369,13 @@ export default function Home() {
         </div>
       )}
 
-      {/* Loading overlay for Ark invoice creation */}
+      {/* Loading overlay for invoice creation */}
       {isCreatingInvoice && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-lg text-center">
             <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-purple-600 mx-auto mb-4"></div>
             <h2 className="text-2xl font-bold mb-2">Generating Invoice...</h2>
-            <p className="text-gray-600">Please wait while we create your Arkade invoice</p>
+            <p className="text-gray-600">Please wait while we create your {paymentMethod === 'bitcoin' ? 'Bitcoin' : 'Arkade'} invoice</p>
           </div>
         </div>
       )}
