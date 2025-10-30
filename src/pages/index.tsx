@@ -229,8 +229,6 @@ export default function Home() {
         {!paymentMethod && (
           <div className="flex-1 w-full px-2 flex flex-col justify-start pt-4">
             <div className="bg-grey w-full p-5 rounded-sm">
-              <h2 className="text-2xl text-center mb-4">Choose Payment Method</h2>
-
               <div className="flex flex-col gap-3">
                 <button
                   onClick={() => router.push('/crypto-qr')}
