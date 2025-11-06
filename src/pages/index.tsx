@@ -84,27 +84,32 @@ export default function Home() {
             console.log('[SSE] Spark payment matched current dialog!');
             setPaymentSuccess(true);
 
-            // Close dialog and return to main after 3 seconds
+            // Close dialog and return to main after 5 seconds
             setTimeout(() => {
               clearSelection();
-            }, 3000);
+            }, 5000);
           }
         }
 
-        // Check if payment is for the currently open Ark dialog
-        // DISABLED FOR TESTING - need to see raw WebSocket messages first
-        // if (showQR && paymentMethod === 'arkade' && selected !== null && payment.event === 'payment_received') {
-        //   // Ark payments come through with address = "arkade"
-        //   if (payment.address === 'arkade') {
-        //     console.log('[SSE] Ark payment matched current dialog!');
-        //     setPaymentSuccess(true);
+        // Check if payment is for the currently open Arkade dialog
+        if (showQR && paymentMethod === 'arkade' && selected !== null && payment.event === 'payment_received') {
+          // Arkade payments come through with address = "arkade"
+          if (payment.address === 'arkade') {
+            const currentDrinkName = drinks[selected].name;
+            const paidDrinkName = payment.drink?.toLowerCase();
 
-        //     // Close dialog and return to main after 3 seconds
-        //     setTimeout(() => {
-        //       clearSelection();
-        //     }, 3000);
-        //   }
-        // }
+            // Match by drink name
+            if (paidDrinkName && currentDrinkName.toLowerCase().includes(paidDrinkName)) {
+              console.log('[SSE] Arkade payment matched current dialog!');
+              setPaymentSuccess(true);
+
+              // Close dialog and return to main after 5 seconds
+              setTimeout(() => {
+                clearSelection();
+              }, 5000);
+            }
+          }
+        }
       } catch (error) {
         console.error('[SSE] Error parsing payment event:', error);
       }
@@ -120,16 +125,16 @@ export default function Home() {
     };
   }, [showQR, paymentMethod, selected]);
 
-  const createInvoice = async (choiceKey: string): Promise<BTCPayInvoice | null> => {
+  const createInvoice = async (choiceKey: string, method: 'BTC' | 'ARKADE' = 'BTC'): Promise<BTCPayInvoice | null> => {
     try {
-      console.log('[Ark] Creating invoice via API for:', choiceKey);
+      console.log('[Invoice] Creating invoice via API for:', choiceKey, 'Method:', method);
 
       const response = await fetch('/api/ark-invoice', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ choiceKey }),
+        body: JSON.stringify({ choiceKey, paymentMethod: method }),
       });
 
       if (!response.ok) {
@@ -153,7 +158,8 @@ export default function Home() {
     if (paymentMethod === 'arkade' || paymentMethod === 'bitcoin') {
       setIsCreatingInvoice(true);
       const choiceKey = drinks[index].arkChoiceKey;
-      const newInvoice = await createInvoice(choiceKey);
+      const method = paymentMethod === 'arkade' ? 'ARKADE' : 'BTC';
+      const newInvoice = await createInvoice(choiceKey, method);
       setIsCreatingInvoice(false);
 
       if (newInvoice) {
@@ -199,9 +205,13 @@ export default function Home() {
     } else if (paymentMethod === 'spark') {
       return getSparkAddressForSelection();
     } else if (paymentMethod === 'arkade' && invoice) {
-      return invoice.invoiceBitcoinUrlQR;
+      // Arkade wallet expects BIP-21: bitcoin:?amount=BTC&ark=ARKADDRESS (no BTC address)
+      const url = new URL(invoice.invoiceBitcoinUrlQR);
+      const ark = url.searchParams.get('ark');
+      const amt = url.searchParams.get('AMOUNT') || url.searchParams.get('amount');
+      return ark && amt ? `bitcoin:?amount=${amt}&ark=${ark}` : invoice.invoiceBitcoinUrlQR;
     } else if (paymentMethod === 'bitcoin' && invoice) {
-      return invoice.address;
+      return invoice.invoiceBitcoinUrl; // Bitcoin URI with amount
     }
     return '';
   };
@@ -257,7 +267,7 @@ export default function Home() {
                   <div className="text-3xl font-bold mb-1">
                     ⚡ LIGHTNING
                   </div>
-                  <p className="text-base opacity-80">Bitcoin Lightning Network</p>
+                  <p className="text-base opacity-80">Lightning on Bitcoin</p>
                 </button>
 
                 <button
@@ -280,7 +290,7 @@ export default function Home() {
                   className="w-full bg-purple-600 text-white py-5 px-4 hover:opacity-90 transition-colors border-4 border-background-alt"
                 >
                   <div className="text-3xl font-bold mb-1">
-                    <span className="text-3xl mr-2">{ark.icon}</span> ARKADE
+                    <span className="text-3xl mr-1">{ark.icon}</span> ARKADE
                   </div>
                   <p className="text-base opacity-80">Ark on Bitcoin</p>
                 </button>

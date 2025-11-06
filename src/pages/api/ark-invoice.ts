@@ -19,7 +19,7 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { choiceKey } = req.body;
+  const { choiceKey, paymentMethod = 'BTC' } = req.body;
 
   if (!choiceKey) {
     return res.status(400).json({ error: 'choiceKey is required' });
@@ -58,8 +58,13 @@ export default async function handler(
     const invoiceId = location.split('/').pop();
     console.log('[Ark API] Invoice ID:', invoiceId);
 
-    // Step 3: Get invoice details
-    const statusUrl = `${baseUrl}/invoice/status?invoiceId=${invoiceId}`;
+    // Step 3: Get invoice details - fetch appropriate payment method
+    let statusUrl;
+    if (paymentMethod === 'ARKADE') {
+      statusUrl = `${baseUrl}/i/${invoiceId}/ARKADE/status`;
+    } else {
+      statusUrl = `${baseUrl}/invoice/status?invoiceId=${invoiceId}`;
+    }
     console.log('[Ark API] Fetching status from:', statusUrl);
 
     const statusResponse = await fetch(statusUrl);
