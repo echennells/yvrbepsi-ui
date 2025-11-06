@@ -304,7 +304,7 @@ export default function Home() {
           <>
             <div className="bg-grey flex flex-col w-full py-2 px-2">
               <p className="text-xl">Choose a drink:</p>
-              <div className="grid grid-cols-3 sm:grid-cols-4 grid-flow-row gap-2 py-2">
+              <div className="grid grid-cols-2 grid-flow-row gap-2 py-2">
                 {drinks.map(({ id, name, color }, index) => (
                   <button
                     key={id}
