@@ -80,6 +80,38 @@ const drinks: Drink[] = [
     sparkAddress: "sp1pgss94dkzp5g0x57ladsp389j5hgrm85aznurgr8j5cuyd7pa65a9un54vahvf",
     arkChoiceKey: "tray-3",
   },
+  {
+    id: "5",
+    name: "cooler",
+    color: "orange",
+    price: 3000,
+    sparkPrice: 3,
+    alcoholic: true,
+    bepsiAmounts: {
+      '1x': 3000,
+      '3x': 9000,
+      '5x': 15000,
+    },
+    lnurl: "LNURL1DP68GURN8GHJ7UM9DEJZUMRPD9EK2EFWDAEXWTMZD96XXMMFDEEHW6T5VD5Z7CTSDYHHVVF0D3H82UNVX5UYUUZJT96RW6MW0QU4GJJEWANKX7TNFDXN7URFDC7N2V34YESK6MM4DE6R6VESXQCZUVPXV36HYCT5D9HKU0F3XQCRQFNKV9EXJCTZD3JN63NPD3EK2FNRDAKK6ETWWS74GUN4V5NXG6TNV93XCET5D9KK20FSLQ4AQ7",
+    sparkAddress: "sp1pgssx2y79dgxumz335fhl64jqe4mcva5z4k9pcs3ljf2nq9cz43wrh0rpu5sw2",
+    arkChoiceKey: "tray-4",
+  },
+  {
+    id: "6",
+    name: "beer",
+    color: "grey",
+    price: 3000,
+    sparkPrice: 3,
+    alcoholic: true,
+    bepsiAmounts: {
+      '1x': 3000,
+      '3x': 9000,
+      '5x': 15000,
+    },
+    lnurl: "LNURL1DP68GURN8GHJ7UM9DEJZUMRPD9EK2EFWDAEXWTMZD96XXMMFDEEHW6T5VD5Z7CTSDYHHVVF0D3H82UNVX5UYUUZJT96RW6MW0QU4GJJEWANKX7TNFDXN7URFDC7N2V3CYESK6MM4DE6R6VESXQCZUVPXV36HYCT5D9HKU0F3XQCRQFNKV9EXJCTZD3JN63NPD3EK2FNRDAKK6ETWWS74GUN4V5NXG6TNV93XCET5D9KK20FSW5V9ZH",
+    sparkAddress: "sp1pgss8taqlw2vhd2pfqzg4y753fpz2heavhztlrt6nh32xek6qvdu5emf7zaggp",
+    arkChoiceKey: "tray-5",
+  },
 ];
 
 export default drinks;
