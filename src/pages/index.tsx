@@ -110,6 +110,17 @@ export default function Home() {
             }
           }
         }
+
+        // Check if payment is for the currently open Lightning dialog
+        if (showQR && paymentMethod === 'lightning' && selected !== null && payment.event === 'payment_received') {
+          if (payment.address === 'lightning') {
+            console.log('[SSE] Lightning payment received!');
+            setPaymentSuccess(true);
+            setTimeout(() => {
+              clearSelection();
+            }, 5000);
+          }
+        }
       } catch (error) {
         console.error('[SSE] Error parsing payment event:', error);
       }
