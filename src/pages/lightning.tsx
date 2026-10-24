@@ -45,7 +45,7 @@ export default function Lightning() {
 
   // SSE connection for payment notifications
   useEffect(() => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3500';
+    const backendUrl = `http://${window.location.hostname}:3500`;
     const eventSource = new EventSource(`${backendUrl}/payment-events`);
 
     eventSource.onopen = () => {
@@ -84,6 +84,20 @@ export default function Lightning() {
             }, 3000);
           }
         }
+
+        // Check if payment is for the currently open Lightning dialog
+        if (showQR && selected !== null && payment.event === 'payment_received') {
+          // Lightning payments come through with address = "lightning"
+          if (payment.address === 'lightning') {
+            console.log('[SSE] Lightning payment matched current dialog!');
+            setPaymentSuccess(true);
+
+            // Close dialog and return to main after 3 seconds
+            setTimeout(() => {
+              clearSelection();
+            }, 3000);
+          }
+        }
       } catch (error) {
         console.error('[SSE] Error parsing payment event:', error);
       }
@@ -97,7 +111,7 @@ export default function Lightning() {
       console.log('[SSE] Closing connection');
       eventSource.close();
     };
-  }, [showSparkQR, showArkQR, selected]);
+  }, [showQR, showSparkQR, showArkQR, selected]);
 
   const createInvoice = async (choiceKey: string): Promise<BTCPayInvoice | null> => {
     try {
@@ -307,33 +321,39 @@ export default function Lightning() {
       )}
 
       {showQR && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => setShowQR(false)}>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={() => !paymentSuccess && setShowQR(false)}>
           <div className="bg-white p-8 rounded-lg" onClick={(e) => e.stopPropagation()}>
-            <h2 className="text-2xl mb-4 text-center">Scan to Pay with Lightning</h2>
-            <QRCodeSVG
-              value={getLnurlForSelection()}
-              size={300}
-              level="M"
-            />
-            <p className="text-3xl mt-6 mb-2 text-center font-bold">
-              {selected !== null ? drinks[selected].name.toUpperCase() : ""}
-            </p>
-            <p className="text-4xl font-bold text-center mb-4">
-              {totalAmount} SATS / {sparkBepsiAmount} BEPSI
-            </p>
-            <div className="mt-4 flex gap-4">
-              <button
-                className="flex-1 bg-red text-white p-4 rounded text-2xl font-bold"
-                onClick={() => setShowQR(false)}
-              >
-                Close
-              </button>
-              {/* <button
-                className="flex-1 bg-blue-600 text-white p-4 rounded text-2xl font-bold"
-              >
-                <span className="text-3xl font-bold">*</span> pay with spark
-              </button> */}
-            </div>
+            {paymentSuccess ? (
+              <div className="text-center">
+                <div className="text-6xl mb-4">✅</div>
+                <h2 className="text-3xl mb-4 text-green-600 font-bold">Payment Received!</h2>
+                <p className="text-2xl mb-2">
+                  Dispensing {selected !== null ? drinks[selected].name : ""}...
+                </p>
+                <p className="text-lg text-gray-600">Returning to main screen...</p>
+              </div>
+            ) : (
+              <>
+                <h2 className="text-2xl mb-4 text-center">Scan to Pay with Lightning</h2>
+                <QRCodeSVG
+                  value={getLnurlForSelection()}
+                  size={300}
+                  level="M"
+                />
+                <p className="text-3xl mt-6 mb-2 text-center font-bold">
+                  {selected !== null ? drinks[selected].name.toUpperCase() : ""}
+                </p>
+                <p className="text-4xl font-bold text-center mb-4">
+                  {totalAmount} SATS / {sparkBepsiAmount} BEPSI
+                </p>
+                <button
+                  className="mt-4 w-full bg-red text-white p-4 rounded text-2xl font-bold"
+                  onClick={() => setShowQR(false)}
+                >
+                  Close
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}

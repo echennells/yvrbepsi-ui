@@ -65,7 +65,7 @@ export default function Home() {
 
   // SSE connection for payment notifications
   useEffect(() => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3500';
+    const backendUrl = `http://${window.location.hostname}:3500`;
     const eventSource = new EventSource(`${backendUrl}/payment-events`);
 
     eventSource.onopen = () => {
@@ -239,7 +239,7 @@ export default function Home() {
     <main
       className={`flex min-h-screen flex-col items-center justify-center sm:p-2 ${inter.className}`}
     >
-      <div className="w-full sm:max-w-[470px] lg:max-w-[540px] h-screen sm:h-[90vh] bg-dull-blue flex flex-col gap-2 background-dull-blue items-center justify-start sm:border-2 border-grey relative">
+      <div className="w-full sm:max-w-[470px] lg:max-w-[540px] h-screen bg-dull-blue flex flex-col gap-2 background-dull-blue items-center justify-start sm:border-2 border-grey relative">
         <div className="w-full px-2 pt-2">
           <button onClick={toggleFullscreen} className="w-full">
             <Image src={banner} alt="banner" width={600} height={300} className="w-full h-auto cursor-pointer hover:opacity-90 transition-opacity" />
@@ -248,62 +248,51 @@ export default function Home() {
 
         {/* Step 1: Payment Method Selection */}
         {!paymentMethod && (
-          <div className="flex-1 w-full px-2 flex flex-col justify-start pt-4">
-            <div className="bg-grey w-full p-5 rounded-sm">
-              <div className="flex flex-col gap-3">
+          <div className="flex-1 w-full px-2 flex flex-col pt-4">
+            <div className="bg-grey w-full p-5 rounded-sm flex-1 flex flex-col">
+              <div className="flex flex-col gap-3 flex-1">
                 <button
                   onClick={() => router.push('/crypto-qr')}
-                  className="w-full bg-background text-white py-5 px-4 hover:bg-background-alt transition-colors border-4 border-background-alt"
+                  className="w-full bg-background text-white px-4 hover:bg-background-alt transition-colors border-4 border-background-alt flex-1 flex items-center justify-center"
                 >
-                  <div className="text-3xl font-bold mb-1">
-                    💰 CRYPTO
+                  <div className="text-4xl font-bold flex items-center justify-center">
+                    <span className="inline-block w-12 text-center">💰</span>
+                    <span>CRYPTO</span>
                   </div>
-                  <p className="text-base opacity-80">Pay with USDC or ETH</p>
                 </button>
 
                 <button
                   onClick={() => setPaymentMethod('bitcoin')}
-                  className="w-full bg-orange-500 text-white py-5 px-4 hover:opacity-90 transition-colors border-4 border-background-alt"
+                  className="w-full bg-orange-500 text-white px-4 hover:opacity-90 transition-colors border-4 border-background-alt flex-1 flex items-center justify-center"
                 >
-                  <div className="text-3xl font-bold mb-1">
-                    ₿ BITCOIN
+                  <div className="text-4xl font-bold flex items-center justify-center">
+                    <span className="inline-block w-12 text-center">₿</span>
+                    <span>BITCOIN</span>
                   </div>
-                  <p className="text-base opacity-80">Bitcoin on-chain</p>
                 </button>
 
                 <button
                   onClick={() => setPaymentMethod('lightning')}
-                  className="w-full bg-red text-white py-5 px-4 hover:opacity-90 transition-colors border-4 border-background-alt"
+                  className="w-full bg-red text-white px-4 hover:opacity-90 transition-colors border-4 border-background-alt flex-1 flex items-center justify-center"
                 >
-                  <div className="text-3xl font-bold mb-1">
-                    ⚡ LIGHTNING
+                  <div className="text-4xl font-bold flex items-center justify-center">
+                    <span className="inline-block w-12 text-center">⚡</span>
+                    <span>LIGHTNING</span>
                   </div>
-                  <p className="text-base opacity-80">Lightning on Bitcoin</p>
                 </button>
 
                 <button
                   onClick={() => setPaymentMethod('spark')}
-                  className="w-full bg-blue-600 text-white py-5 px-4 hover:opacity-90 transition-colors border-4 border-background-alt"
+                  className="w-full bg-blue-600 text-white px-4 hover:opacity-90 transition-colors border-4 border-background-alt flex-1 flex items-center justify-center"
                 >
-                  <div className="text-3xl font-bold mb-1 inline-flex items-center justify-center w-full">
-                    <div className="bg-black p-1 rounded mr-2">
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
+                  <div className="text-4xl font-bold flex items-center justify-center">
+                    <span className="inline-block w-12 text-center">
+                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="text-white inline-block">
                         <path d="M12 2L13.5 8.5L20 7L14.5 12L20 17L13.5 15.5L12 22L10.5 15.5L4 17L9.5 12L4 7L10.5 8.5L12 2Z" fill="currentColor"/>
                       </svg>
-                    </div>
-                    SPARK
+                    </span>
+                    <span>SPARK</span>
                   </div>
-                  <p className="text-base opacity-80">Spark on Bitcoin</p>
-                </button>
-
-                <button
-                  onClick={() => setPaymentMethod('arkade')}
-                  className="w-full bg-purple-600 text-white py-5 px-4 hover:opacity-90 transition-colors border-4 border-background-alt"
-                >
-                  <div className="text-3xl font-bold mb-1">
-                    <span className="text-3xl mr-1">{ark.icon}</span> ARKADE
-                  </div>
-                  <p className="text-base opacity-80">Ark on Bitcoin</p>
                 </button>
               </div>
             </div>
